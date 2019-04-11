@@ -1,13 +1,15 @@
 from weapons_and_spells import *
 
 class Unit:
-    __max_health = 0
-    __max_mana = 0
     def __init__(self, health, mana):
-        if not isinstance(health,int) and not isinstance(health,float) and health < 0 and not isinstance(mana,int) and not isinstance(mana,float) and mana < 0:
-            raise ValueError('Health and Mana must be positive numbers of type < int,float > ')
+        if not isinstance(health,int) and not isinstance(health,float) and not isinstance(mana,int) and not isinstance(mana,float):
+            raise TypeError('Health and Mana must be of type < int > or < float > ! ')
+        if  mana < 0 or health < 0:
+            raise ValueError('Health and Mana must be positive!')
         self.health = health
         self.mana = mana
+        self.__max_health = self.health
+        self.__max_mana = self.mana
     def get_health(self):
         return self.health
 
@@ -28,16 +30,15 @@ class Unit:
         return self.health
 
     def take_healing(self, healing_points):
-        if self.is_alive()==False:
+        if self.is_alive() == False:
             return False
-        elif self.health == self.__max_hp:
+        elif self.health == self.__max_health:
             return 'Health is already at max'
-        elif self.health + healing_points < self.__max_hp:
-            
+        elif self.health + healing_points < self.__max_health:
             self.health += healing_points
             return self.health
         else:
-            self.health = self.max_hp
+            self.health = self.__max_health
             return self.health
 
     def take_mana(self, mana_points):
@@ -53,7 +54,11 @@ class Unit:
 class Hero(Unit):
     def __init__(self, health, mana, name, title, mana_regeneration_rate):
         super().__init__(health,mana)
+        if not isinstance(name,str):
+            raise TypeError('Hero name must be type < str > !')
         self.name = name
+        if not isinstance(title,str):
+            raise TypeError('Hero title must be type < str > !')
         self.title =title
         self.is_equiped = False
         self.learned_spell = False
@@ -64,25 +69,25 @@ class Hero(Unit):
         return '{0} the {1}'.format(self.name, self.title)
 
     def get_health(self):
-        super().get_health()
+        return super().get_health()
 
     def get_mana(self):
-        super().get_mana()
+        return super().get_mana()
 
     def is_alive(self):
-        super().is_alive()
+        return super().is_alive()
             
     def can_cast(self):
-        super().can_cast()
+        return super().can_cast()
 
-    def take_damage(self):
-        super().take_damage()
+    def take_damage(self, damage_points):
+        return super().take_damage(damage_points)
 
-    def take_healing(self):
-        super().take_healing()
+    def take_healing(self, healing_points):
+        return super().take_healing(healing_points)
 
-    def take_mana(self):
-        super().take_mana()
+    def take_mana(self, mana_points):
+        return super().take_mana(mana_points)
 
     def equip(self,weapon):
         if self.is_equiped == False:
@@ -117,33 +122,30 @@ class Hero(Unit):
 class Enemy(Unit):
     def __init__(self,health,mana, damage):
         super().__init__(health=health,mana=mana)
+        if type(damage) is not int and type(damage) is not float:
+            raise TypeError('Enemy\'s damage must be type < int > or < float > !')
+        if damage < 0:
+            raise ValueError('Enemy damage must be positive !')
         self.damage = damage
 
     def get_health(self):
-        super().get_health()
+        return super().get_health()
 
     def get_mana(self):
-        super().get_mana()
+        return super().get_mana()
 
     def is_alive(self):
-        super().is_alive()
+        return super().is_alive()
             
     def can_cast(self):
-        super().can_cast()
+        return super().can_cast()
 
-    def take_damage(self):
-        super().take_damage()
+    def take_damage(self, damage_points):
+        return super().take_damage(damage_points)
 
-    def take_healing(self):
-        super().take_healing()
+    def take_healing(self, healing_points):
+        return super().take_healing(healing_points)
 
-    def take_mana(self):
-        super().take_mana()
+    def take_mana(self , mana_points):
+        return super().take_mana(mana_points)
 
-
-h = Hero(name="Bron", title="Dragonslayer", health=100, mana=100, mana_regeneration_rate=2)
-w = Weapon(name="The Axe of Destiny", damage=20)
-
-h.equip(w)
-
-h.attack(by="weapon") == 20
